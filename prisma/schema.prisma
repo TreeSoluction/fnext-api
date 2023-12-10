@@ -7,9 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Owner {
   id    Int    @id @default(autoincrement())
   name  String
   email String @default("")
   birth_date DateTime? 
+  cpf String 
+  phone String 
+  doc_id String 
+  image String 
+  companys Company[]
+}
+
+model Company {
+  id    Int    @id @default(autoincrement())
+  name  String
+  cnpj String?  
+  corporate_name String 
+  address String  
+  phone String
+  email String
+  category Category @relation(fields: [category_id], references:[id])
+  category_id Int
+  owner Owner @relation(fields: [owner_id], references:[id])
+  owner_id Int 
+}
+
+model Category { 
+  id    Int    @id @default(autoincrement())
+  name String 
+  companys Company[]
 }
