@@ -10,7 +10,7 @@ datasource db {
 model Owner {
   id    Int    @id @default(autoincrement())
   name  String
-  email String @default("")
+  email String @unique
   birth_date DateTime @db.Date
   cpf String? 
   phone String? 
@@ -22,7 +22,7 @@ model Owner {
 model Company {
   id    Int    @id @default(autoincrement())
   name  String
-  cnpj String?  
+  cnpj String?  @unique
   corporate_name String 
   address String  
   phone String
