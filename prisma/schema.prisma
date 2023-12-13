@@ -11,11 +11,11 @@ model Owner {
   id    Int    @id @default(autoincrement())
   name  String
   email String @default("")
-  birth_date DateTime? 
-  cpf String 
-  phone String 
-  doc_id String 
-  image String 
+  birth_date DateTime @db.Date
+  cpf String? 
+  phone String? 
+  doc_id String? 
+  image String? 
   companys Company[]
 }
 
