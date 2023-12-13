@@ -1,4 +1,11 @@
-import { Body, Controller, Post, HttpCode } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { OwnerService } from "./owner.service";
 import { createOwnerDTO } from "./dto/createOwnerDTO";
 
@@ -9,7 +16,10 @@ export class OwnerController {
   @Post()
   @HttpCode(201)
   async register(@Body() createOwnerDto: createOwnerDTO) {
-    await this.ownerService.register(createOwnerDto);
+    const result = await this.ownerService.register(createOwnerDto);
+    if (result === false) {
+      throw new HttpException("Email already in use", HttpStatus.CONFLICT);
+    }
     return;
   }
 }
