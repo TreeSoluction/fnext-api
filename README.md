@@ -2,7 +2,9 @@
 
 A api for all features of fnext app.
 
-## Documentation
+# Documentation
+
+## Owner
 
 #### Register a new Owner
 
@@ -16,6 +18,16 @@ A api for all features of fnext app.
 | `email`    | `string` | **Obligatory**. email of the owner     |
 | `birtdate` | `string` | **Obligatory**. birthdate of the owner |
 
+### Request Example
+
+```
+{
+  "name" : "Guilherme Vianna", 
+  "email" : "mataveli91@gmail.com",
+  "birthdate" : "2023-07-28" 
+}
+```
+### Response
 If email is already taken return **409** status code
 
 ```http
