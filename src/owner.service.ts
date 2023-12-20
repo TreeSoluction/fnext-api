@@ -1,4 +1,4 @@
-import { HttpCode, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { createOwnerDTO } from "./dto/createOwnerDTO";
 import { PrismaClient } from "@prisma/client";
 
@@ -12,7 +12,7 @@ export class OwnerService {
         data: {
           name: dto.name,
           email: dto.email,
-          birth_date: `${dto.birthdate}T00:00:00.000Z`,
+          password: dto.password,
         },
       });
       await this.prismaClient.$disconnect();
