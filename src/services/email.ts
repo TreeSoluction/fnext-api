@@ -1,8 +1,5 @@
 import axios from "axios";
-<<<<<<< HEAD
 
-=======
->>>>>>> 75d9b087d785683f4cb878bfc5e8b5fd49c105a6
 require("dotenv").config();
 
 export async function SendConfirmationEmail(
@@ -10,13 +7,8 @@ export async function SendConfirmationEmail(
   name: string,
   code: string
 ): Promise<boolean> {
-<<<<<<< HEAD
   try {
     const response = await axios.post(
-=======
-  const response = await axios
-    .post(
->>>>>>> 75d9b087d785683f4cb878bfc5e8b5fd49c105a6
       "https://api.brevo.com/v3/smtp/email",
       {
         sender: {
