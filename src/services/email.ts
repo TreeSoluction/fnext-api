@@ -22,7 +22,7 @@ export async function SendConfirmationEmail(
           },
         ],
         subject: "Confirmacao de Email",
-        htmlContent: `<html><head></head><body><p>Hello,</p>Saudacoes ${name}. Esse e um email de confirmacao de cadastro. Segue o codigo de confirmacao ${code}</p></body></html>`,
+        htmlContent: `<html><head></head><body><p>Ola ${name},</p>Esse e um email de confirmacao de cadastro. Segue o codigo de confirmacao ${code}</p></body></html>`,
       },
       {
         headers: {
