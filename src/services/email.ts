@@ -3,9 +3,9 @@ import axios from "axios";
 require("dotenv").config();
 
 export async function SendConfirmationEmail(
-  destination: string,
-  name: string,
-  code: string
+  destination: String,
+  name: String,
+  code: String
 ): Promise<boolean> {
   try {
     const response = await axios.post(
@@ -21,8 +21,8 @@ export async function SendConfirmationEmail(
             name: name,
           },
         ],
-        subject: "Hello world",
-        htmlContent: `<html><head></head><body><p>Hello,</p>Esse e um email de confirmacao de cadastro. Segue o codigo de confirmacao ${code}</p></body></html>`,
+        subject: "Confirmacao de Email",
+        htmlContent: `<html><head></head><body><p>Ola ${name},</p>Esse e um email de confirmacao de cadastro. Segue o codigo de confirmacao ${code}</p></body></html>`,
       },
       {
         headers: {
@@ -33,10 +33,8 @@ export async function SendConfirmationEmail(
       }
     );
 
-    // Assuming a successful response indicates success
     return response.status === 200;
   } catch (error) {
-    // Handle errors and return false
     console.error("Error sending confirmation email:", error);
     return false;
   }
