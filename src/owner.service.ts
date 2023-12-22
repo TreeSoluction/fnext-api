@@ -47,7 +47,6 @@ export class OwnerService {
   async verifyAccount(dto: verifyAccountDTO): Promise<EOperations> {
     try {
       let confirmationCode: ConfirmationCode;
-      console.log(dto);
 
       if (!dto.ownerid) {
         const ownerSearchResult =
