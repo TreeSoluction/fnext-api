@@ -8,16 +8,17 @@ datasource db {
 }
 
 model Owner {
-  id         Int       @id @default(autoincrement())
-  name       String
-  password   String
-  email      String    @unique
-  birth_date DateTime? @db.Date
-  cpf        String?
-  phone      String?
-  doc_id     String?
-  image      String?
-  companys   Company[]
+  id               Int               @id @default(autoincrement())
+  name             String
+  password         String
+  email            String            @unique
+  birth_date       DateTime?         @db.Date
+  cpf              String?
+  phone            String?
+  doc_id           String?
+  image            String?
+  companys         Company[]
+  confirmationCode ConfirmationCode?
 }
 
 model Company {
@@ -38,4 +39,11 @@ model Category {
   id       Int       @id @default(autoincrement())
   name     String
   companys Company[]
+}
+
+model ConfirmationCode {
+  id       Int    @id @default(autoincrement())
+  code     String
+  owner    Owner  @relation(fields: [owner_id], references: [id])
+  owner_id Int    @unique
 }
