@@ -3,9 +3,9 @@ import axios from "axios";
 require("dotenv").config();
 
 export async function SendConfirmationEmail(
-  destination: string,
-  name: string,
-  code: string
+  destination: String,
+  name: String,
+  code: String
 ): Promise<boolean> {
   try {
     const response = await axios.post(
