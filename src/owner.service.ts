@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { createOwnerDTO } from "./dto/createOwnerDTO";
 import { PrismaClient } from "@prisma/client";
 import { SendConfirmationEmail } from "./services/email";
+import { verifyAccountDTO } from "./dto/verifyAccountDTO";
+import { EOperations } from "./EOperations/EOperations";
 
 @Injectable()
 export class OwnerService {
@@ -39,6 +41,37 @@ export class OwnerService {
         await this.prismaClient.$disconnect();
         return false;
       }
+    }
+  }
+
+  async verifyAccount(dto: verifyAccountDTO): Promise<EOperations> {
+    try {
+      const emailConfirmation =
+        await this.prismaClient.confirmationCode.findUniqueOrThrow({
+          where: { owner_id: dto.ownerid },
+        });
+
+      if (emailConfirmation.code === dto.code) {
+        await this.prismaClient.confirmationCode.delete({
+          where: { id: emailConfirmation.id },
+        });
+      } else {
+        return EOperations.FAIL;
+      }
+
+      await this.prismaClient.owner.update({
+        where: { id: dto.ownerid },
+        data: {
+          verify: true,
+        },
+      });
+
+      await this.prismaClient.$disconnect();
+
+      return EOperations.SUCESS;
+    } catch (exception) {
+      await this.prismaClient.$disconnect();
+      return EOperations.NOT_FOUND;
     }
   }
 
