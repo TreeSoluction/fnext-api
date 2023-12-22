@@ -19,6 +19,7 @@ model Owner {
   image            String?
   companys         Company[]
   confirmationCode ConfirmationCode?
+  verify           Boolean           @default(false)
 }
 
 model Company {
