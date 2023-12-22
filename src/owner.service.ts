@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { createOwnerDTO } from "./dto/createOwnerDTO";
-import { PrismaClient } from "@prisma/client";
+import { ConfirmationCode, PrismaClient } from "@prisma/client";
 import { SendConfirmationEmail } from "./services/email";
 import { verifyAccountDTO } from "./dto/verifyAccountDTO";
 import { EOperations } from "./EOperations/EOperations";
@@ -46,21 +46,35 @@ export class OwnerService {
 
   async verifyAccount(dto: verifyAccountDTO): Promise<EOperations> {
     try {
-      const emailConfirmation =
-        await this.prismaClient.confirmationCode.findUniqueOrThrow({
-          where: { owner_id: dto.ownerid },
-        });
+      let confirmationCode: ConfirmationCode;
 
-      if (emailConfirmation.code === dto.code) {
+      if (!dto.ownerid) {
+        const ownerSearchResult =
+          await this.prismaClient.owner.findUniqueOrThrow({
+            where: { email: dto.email },
+          });
+
+        confirmationCode =
+          await this.prismaClient.confirmationCode.findUniqueOrThrow({
+            where: { owner_id: ownerSearchResult.id },
+          });
+      } else {
+        confirmationCode =
+          await this.prismaClient.confirmationCode.findUniqueOrThrow({
+            where: { owner_id: dto.ownerid },
+          });
+      }
+
+      if (confirmationCode.code === dto.code) {
         await this.prismaClient.confirmationCode.delete({
-          where: { id: emailConfirmation.id },
+          where: { id: confirmationCode.id },
         });
       } else {
         return EOperations.FAIL;
       }
 
       await this.prismaClient.owner.update({
-        where: { id: dto.ownerid },
+        where: { id: confirmationCode.owner_id },
         data: {
           verify: true,
         },
