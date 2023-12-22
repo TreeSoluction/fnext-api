@@ -22,7 +22,7 @@ export class OwnerController {
     if (result === false) {
       throw new HttpException("Email already in use", HttpStatus.CONFLICT);
     }
-    return;
+    return result;
   }
 
   @Post("/verifyemail")
