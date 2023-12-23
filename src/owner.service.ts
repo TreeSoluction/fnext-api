@@ -4,6 +4,7 @@ import { ConfirmationCode, PrismaClient } from "@prisma/client";
 import { SendConfirmationEmail } from "./services/email";
 import { verifyAccountDTO } from "./dto/verifyAccountDTO";
 import { EOperations } from "./EOperations/EOperations";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class OwnerService {
@@ -15,7 +16,7 @@ export class OwnerService {
         data: {
           name: dto.name,
           email: dto.email,
-          password: dto.password,
+          password: await this.hashPassword(dto.password),
         },
       });
 
@@ -96,5 +97,13 @@ export class OwnerService {
     const randomString: string = randomNumbers.join("");
 
     return randomString;
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(password, salt);
+
+    return hash;
   }
 }
