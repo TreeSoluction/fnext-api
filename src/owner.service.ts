@@ -4,6 +4,7 @@ import { ConfirmationCode, PrismaClient } from "@prisma/client";
 import { SendConfirmationEmail } from "./services/email";
 import { verifyAccountDTO } from "./dto/verifyAccountDTO";
 import { EOperations } from "./EOperations/EOperations";
+import criptografy from "./services/criptografy";
 
 @Injectable()
 export class OwnerService {
@@ -11,11 +12,12 @@ export class OwnerService {
 
   async register(dto: createOwnerDTO) {
     try {
+      const passwordManager = new criptografy();
       const ownerRegisterResult = await this.prismaClient.owner.create({
         data: {
           name: dto.name,
           email: dto.email,
-          password: dto.password,
+          password: await passwordManager.hashPassword(dto.password),
         },
       });
 
