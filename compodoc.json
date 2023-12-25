@@ -1,0 +1,9 @@
+{
+  "title": "fnext-api",
+  "output": "docs/",
+  "disableCoverage": true,
+  "disableSourceCode": false,
+  "includes": "./src/**/*.ts",
+  "tsconfig": "./tsconfig.json",
+  "serve": true
+}
