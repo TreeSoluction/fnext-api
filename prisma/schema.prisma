@@ -7,45 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Owner {
-  id               Int               @id @default(autoincrement())
-  name             String
-  password         String
-  email            String            @unique
-  birth_date       DateTime?         @db.Date
-  cpf              String?
-  phone            String?
-  doc_id           String?
-  image            String?
-  companys         Company[]
-  confirmationCode ConfirmationCode?
-  verify           Boolean           @default(false)
+model User {
+  id                 Int               @id @default(autoincrement())
+  password           String
+  email              String            @unique
+  verify             Boolean           @default(false)
+  Investidor         Investidor[]
+  Startup            Startup[]
+  ConfirmationCode   ConfirmationCode? @relation(fields: [confirmationCodeId], references: [id])
+  confirmationCodeId Int?
 }
 
-model Company {
-  id             Int      @id @default(autoincrement())
-  name           String
-  cnpj           String?  @unique
-  corporate_name String
-  address        String
-  phone          String
-  email          String
-  category       Category @relation(fields: [category_id], references: [id])
-  category_id    Int
-  owner          Owner    @relation(fields: [owner_id], references: [id])
-  owner_id       Int
+model Investidor {
+  id         Int      @id @default(autoincrement())
+  name       String
+  phone      String   @unique
+  birth_date DateTime @db.Date
+  cpf        String?
+  created_at DateTime @default(now())
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
 }
 
-model Category {
-  id       Int       @id @default(autoincrement())
-  name     String
-  companys Company[]
+model Startup {
+  id         Int      @id @default(autoincrement())
+  name       String
+  phone      String   @unique
+  birth_date DateTime @db.Date
+  cnpj       String
+  created_at DateTime @default(now())
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
 }
 
 model ConfirmationCode {
-  id            Int      @id @default(autoincrement())
-  code          String
-  creation_Date DateTime @default(now())
-  owner         Owner    @relation(fields: [owner_id], references: [id])
-  owner_id      Int      @unique
+  id          Int      @id @default(autoincrement())
+  code        String
+  creation_at DateTime @default(now())
+  User        User[]
 }
