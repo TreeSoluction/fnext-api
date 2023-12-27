@@ -7,9 +7,9 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { InvestorService } from "./investor.service";
-import { createInvestorDTO } from "../dto/createInvestorDTO";
-import { verifyAccountDTO } from "../dto/verifyAccountDTO";
-import { EOperations } from "../enums/operationsResults/EOperations";
+import { createInvestorDTO } from "../../dto/createInvestorDTO";
+import { verifyAccountDTO } from "../../dto/verifyAccountDTO";
+import { EOperations } from "../../enums/operationsResults/EOperations";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 
 @Controller("investor")
@@ -30,17 +30,4 @@ export class InvestorController {
 
     return result;
   }
-
-  // @Post("/verifyemail")
-  // @HttpCode(200)
-  // async confirmEmail(@Body() verifyAccountDto: verifyAccountDTO) {
-  //   const result = await this.investorService.verifyAccount(verifyAccountDto);
-  //   if (result === EOperations.NOT_FOUND) {
-  //     throw new HttpException("User not found", HttpStatus.NOT_FOUND);
-  //   }
-  //   if (result === EOperations.FAIL) {
-  //     throw new HttpException("Code incorrect", HttpStatus.CONFLICT);
-  //   }
-  //   return;
-  // }
 }
