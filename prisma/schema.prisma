@@ -43,8 +43,9 @@ model Category {
 }
 
 model ConfirmationCode {
-  id       Int    @id @default(autoincrement())
-  code     String
-  owner    Owner  @relation(fields: [owner_id], references: [id])
-  owner_id Int    @unique
+  id            Int      @id @default(autoincrement())
+  code          String
+  creation_Date DateTime @default(now())
+  owner         Owner    @relation(fields: [owner_id], references: [id])
+  owner_id      Int      @unique
 }
