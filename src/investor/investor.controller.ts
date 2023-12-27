@@ -1,0 +1,46 @@
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
+import { InvestorService } from "./investor.service";
+import { createInvestorDTO } from "../dto/createInvestorDTO";
+import { verifyAccountDTO } from "../dto/verifyAccountDTO";
+import { EOperations } from "../enums/operationsResults/EOperations";
+import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
+
+@Controller("investor")
+export class InvestorController {
+  constructor(private readonly investorService: InvestorService) {}
+
+  @Post()
+  @HttpCode(201)
+  async register(@Body() createInvestorDto: createInvestorDTO) {
+    const result = await this.investorService.register(createInvestorDto);
+
+    if (result === ERegisterOperation.EMAIL_ALREADY_TAKEN) {
+      throw new HttpException(
+        "Existe uma conta cadastrada com esse email",
+        HttpStatus.CONFLICT
+      );
+    }
+
+    return result;
+  }
+
+  // @Post("/verifyemail")
+  // @HttpCode(200)
+  // async confirmEmail(@Body() verifyAccountDto: verifyAccountDTO) {
+  //   const result = await this.investorService.verifyAccount(verifyAccountDto);
+  //   if (result === EOperations.NOT_FOUND) {
+  //     throw new HttpException("User not found", HttpStatus.NOT_FOUND);
+  //   }
+  //   if (result === EOperations.FAIL) {
+  //     throw new HttpException("Code incorrect", HttpStatus.CONFLICT);
+  //   }
+  //   return;
+  // }
+}

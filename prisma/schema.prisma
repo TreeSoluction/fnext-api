@@ -12,32 +12,32 @@ model User {
   password           String
   email              String            @unique
   verify             Boolean           @default(false)
-  Investidor         Investidor[]
+  Investor           Investor[]
   Startup            Startup[]
   ConfirmationCode   ConfirmationCode? @relation(fields: [confirmationCodeId], references: [id])
   confirmationCodeId Int?
 }
 
-model Investidor {
+model Investor {
   id         Int      @id @default(autoincrement())
   name       String
-  phone      String   @unique
+  phone      String
   birth_date DateTime @db.Date
   cpf        String?
   created_at DateTime @default(now())
-  User       User?    @relation(fields: [userId], references: [id])
-  userId     Int?
+  User       User     @relation(fields: [userId], references: [id])
+  userId     Int
 }
 
 model Startup {
   id         Int      @id @default(autoincrement())
   name       String
-  phone      String   @unique
+  phone      String
   birth_date DateTime @db.Date
   cnpj       String
   created_at DateTime @default(now())
-  User       User?    @relation(fields: [userId], references: [id])
-  userId     Int?
+  User       User     @relation(fields: [userId], references: [id])
+  userId     Int
 }
 
 model ConfirmationCode {
