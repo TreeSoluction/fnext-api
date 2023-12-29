@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { StartupService } from "./startup.service";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
-import { createStartupDTO } from "src/dto/createStartupDTO";
+import { createStartupDTO } from "src/dto/create/createStartupDTO";
 
 @Controller("startup")
 export class StartupController {

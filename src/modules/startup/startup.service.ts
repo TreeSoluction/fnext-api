@@ -1,16 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { createInvestorDTO } from "src/dto/createInvestorDTO";
-import { createStartupDTO } from "src/dto/createStartupDTO";
-import { createUserDTO } from "src/dto/createUserDTO";
+import { createInvestorDTO } from "src/dto/create/createInvestorDTO";
+import { createStartupDTO } from "src/dto/create/createStartupDTO";
+import { createUserDTO } from "src/dto/create/createUserDTO";
+import { SendConfirmationEmailDTO } from "src/dto/email/sendConfirmationEmailDTO";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
-import { UserService } from "src/user/user.service";
+import { UserService } from "src/modules/user/user.service";
+import { EmailService } from "src/services/email/email.service";
 
 @Injectable()
 export class StartupService {
   constructor(
     private readonly prismaClient: PrismaClient,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly emailService: EmailService
   ) {}
 
   async register(dto: createStartupDTO): Promise<any> {
@@ -40,6 +43,22 @@ export class StartupService {
           userId: userRegister.id,
         },
       });
+
+      const confirmationCodeResult =
+        await this.prismaClient.confirmationCode.findUnique({
+          where: {
+            id: userRegister.confirmationCodeId,
+          },
+        });
+
+      await this.emailService.SendEmail(
+        new SendConfirmationEmailDTO(
+          dto.email,
+          "fenext2023@gmail.com",
+          confirmationCodeResult.code,
+          dto.name
+        )
+      );
 
       return startupRegister;
     } catch (exception) {
