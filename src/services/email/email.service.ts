@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import axios from "axios";
-import { SendConfirmationEmailDTO } from "src/dto/email/sendConfirmationEmailDTO";
+import { SendConfirmationEmailDTO } from "src/dto/email/SendConfirmationEmailDTO";
 
 @Injectable()
 export class EmailService {

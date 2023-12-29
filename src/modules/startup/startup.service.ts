@@ -1,9 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { createInvestorDTO } from "src/dto/create/createInvestorDTO";
 import { createStartupDTO } from "src/dto/create/createStartupDTO";
 import { createUserDTO } from "src/dto/create/createUserDTO";
-import { SendConfirmationEmailDTO } from "src/dto/email/sendConfirmationEmailDTO";
+import { SendConfirmationEmailDTO } from "src/dto/email/SendConfirmationEmailDTO";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 import { UserService } from "src/modules/user/user.service";
 import { EmailService } from "src/services/email/email.service";
