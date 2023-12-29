@@ -3,7 +3,7 @@ import { InvestorController } from "./investor.controller";
 import { InvestorService } from "./investor.service";
 import { PrismaClient } from "@prisma/client";
 import { AuthModule } from "../../auth/auth.module";
-import { UserService } from "src/user/user.service";
+import { UserService } from "src/modules/user/user.service";
 
 @Module({
   imports: [AuthModule],

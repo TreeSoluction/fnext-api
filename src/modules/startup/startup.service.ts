@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { createInvestorDTO } from "src/dto/createInvestorDTO";
-import { createStartupDTO } from "src/dto/createStartupDTO";
-import { createUserDTO } from "src/dto/createUserDTO";
+import { createInvestorDTO } from "src/dto/create/createInvestorDTO";
+import { createStartupDTO } from "src/dto/create/createStartupDTO";
+import { createUserDTO } from "src/dto/create/createUserDTO";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
-import { UserService } from "src/user/user.service";
+import { UserService } from "src/modules/user/user.service";
 
 @Injectable()
 export class StartupService {
