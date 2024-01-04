@@ -4,12 +4,14 @@ import { PrismaClient } from "@prisma/client";
 import { UserService } from "src/modules/user/user.service";
 import { createUserDTO } from "src/dto/create/createUserDTO";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
+import { EmailService } from "src/services/email/email.service";
 
 @Injectable()
 export class InvestorService {
   constructor(
     private readonly prismaClient: PrismaClient,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly emailService: EmailService
   ) {}
 
   async register(dto: createInvestorDTO): Promise<any> {
@@ -30,6 +32,19 @@ export class InvestorService {
           userId: userRegister.id,
         },
       });
+
+      const confirmationCodeResult =
+        await this.prismaClient.confirmationCode.findUnique({
+          where: {
+            id: userRegister.confirmationCodeId,
+          },
+        });
+
+      await this.emailService.sendConfirmationEmail(
+        userRegister.email,
+        investorRegister.name,
+        confirmationCodeResult.code
+      );
 
       return investorRegister;
     } catch (exception) {

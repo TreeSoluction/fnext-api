@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
+import { userInfo } from "os";
 import { createStartupDTO } from "src/dto/create/createStartupDTO";
 import { createUserDTO } from "src/dto/create/createUserDTO";
 import { SendConfirmationEmailDTO } from "src/dto/email/SendConfirmationEmailDTO";
@@ -50,13 +51,10 @@ export class StartupService {
           },
         });
 
-      await this.emailService.SendEmail(
-        new SendConfirmationEmailDTO(
-          dto.email,
-          "fenext2023@gmail.com",
-          confirmationCodeResult.code,
-          dto.name
-        )
+      await this.emailService.sendConfirmationEmail(
+        userRegister.email,
+        startupRegister.name,
+        confirmationCodeResult.code
       );
 
       return startupRegister;

@@ -8,8 +8,6 @@ import {
 } from "@nestjs/common";
 import { InvestorService } from "./investor.service";
 import { createInvestorDTO } from "../../dto/create/createInvestorDTO";
-import { VerifyAccountDTO } from "../../dto/user/VerifyAccountDTO";
-import { EOperations } from "../../enums/operationsResults/EOperations";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 
 @Controller("investor")
