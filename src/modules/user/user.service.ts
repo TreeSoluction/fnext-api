@@ -79,7 +79,6 @@ export class UserService {
       if (exception.code === "P2016") {
         return EConfirmationCodeStatus.NOT_FOUND;
       }
-      console.log(exception);
 
       return exception;
     }

@@ -19,8 +19,6 @@ export class UserController {
   async register(@Body() verifyAccountDto: VerifyAccountDTO) {
     const result = await this.userService.confirmAccount(verifyAccountDto);
 
-    console.log(result);
-
     if (result === EConfirmationCodeStatus.INCORRECT) {
       throw new HttpException("Codigo Incorreto", HttpStatus.CONFLICT);
     }
