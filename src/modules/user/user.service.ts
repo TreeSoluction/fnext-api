@@ -1,8 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { createUserDTO } from "src/dto/create/createUserDTO";
+import { PasswordChangeDTO } from "src/dto/user/PasswordChangeDTO";
+import { PasswordResetDTO } from "src/dto/user/PasswordResetDTO";
 import { VerifyAccountDTO } from "src/dto/user/VerifyAccountDTO";
 import { EConfirmationCodeStatus } from "src/enums/operationsResults/EConfirmationCodeStatus";
+import { EOperations } from "src/enums/operationsResults/EOperations";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 import criptografy from "src/helper/criptografy";
 
@@ -84,7 +87,87 @@ export class UserService {
     }
   }
 
+  async passwordReset(dto: PasswordResetDTO): Promise<any> {
+    try {
+      const passwordManager = new criptografy();
+
+      await this.prismaClient.user.findFirstOrThrow({
+        where: {
+          email: dto.email,
+        },
+      });
+
+      await this.prismaClient.user.update({
+        where: {
+          email: dto.email,
+        },
+        data: {
+          password: await passwordManager.hashPassword(
+            this.generateRandomPassword()
+          ),
+        },
+      });
+
+      return EOperations.SUCESS;
+    } catch (exception) {
+      if (exception.code === "P2002") {
+        return ERegisterOperation.EMAIL_ALREADY_TAKEN;
+      }
+
+      if (exception.code === "P2016") {
+        return EConfirmationCodeStatus.NOT_FOUND;
+      }
+
+      return exception;
+    }
+  }
+
+  async passwordChange(dto: PasswordChangeDTO): Promise<any> {
+    try {
+      const passwordManager = new criptografy();
+
+      const userSearchResult = await this.prismaClient.user.findFirstOrThrow({
+        where: {
+          id: dto.id,
+        },
+      });
+
+      const passwordVerification = await passwordManager.comparePasswords(
+        dto.password,
+        userSearchResult.password
+      );
+
+      if (!passwordVerification) {
+        return EOperations.FAIL;
+      }
+
+      await this.prismaClient.user.update({
+        where: {
+          id: dto.id,
+        },
+        data: {
+          password: await passwordManager.hashPassword(dto.newPassword),
+        },
+      });
+
+      return EOperations.SUCESS;
+    } catch (exception) {
+      if (exception.code === "P2016") {
+        return EOperations.NOT_FOUND;
+      }
+
+      return exception;
+    }
+  }
+
   generateRandomFourDigits(): string {
     return Math.floor(1000 + Math.random() * 9000).toString();
+  }
+
+  generateRandomPassword(): string {
+    const randonPassword = Math.random().toString(36).slice(-6);
+    console.log(randonPassword);
+
+    return randonPassword;
   }
 }
