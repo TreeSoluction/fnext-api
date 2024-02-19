@@ -3,3 +3,14 @@ node_modules
 dist
 .env
 documentation
+yarn.lock
+dist/
+build/
+.env.local
+.env.development
+.env.test
+.env.production
+.idea/
+.vscode/
+*.swp
+*~
