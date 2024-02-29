@@ -8,6 +8,7 @@ import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperati
 import { UserService } from "src/modules/user/user.service";
 import { EmailService } from "src/services/email/email.service";
 import { RegisterBusinessDataDTO } from "src/dto/startup/RegisterBusinessDataDTO";
+import { connect } from "http2";
 
 @Injectable()
 export class StartupService {
@@ -66,6 +67,7 @@ export class StartupService {
 
   async registerBusinessData(dto: RegisterBusinessDataDTO): Promise<any> {
     try {
+      console.log(dto);
       const startupRegister = await this.prismaClient.startup.update({
         where: { id: dto.id },
         data: {
@@ -77,7 +79,14 @@ export class StartupService {
           royalty: dto.royalty,
           companyHeadquarters: dto.companyHeadquarters,
           observationNotes: dto.observationNotes,
-          modelBusiness: dto.modelBusiness,
+          ModelOfBusiness: {
+            create: {
+              name: dto.modelBusiness,
+              capitalForInstallation: dto.capitalOfInstalation,
+              franchiseFee: dto.franchiseFee,
+              workingCapital: dto.workingCapital,
+            },
+          },
         },
       });
 

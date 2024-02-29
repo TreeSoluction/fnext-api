@@ -19,4 +19,10 @@ export class RegisterBusinessDataDTO {
   observationNotes: string;
   @IsNotEmpty()
   modelBusiness: string;
+  @IsNotEmpty()
+  capitalOfInstalation: number;
+  @IsNotEmpty()
+  franchiseFee: number;
+  @IsNotEmpty()
+  workingCapital: number;
 }
