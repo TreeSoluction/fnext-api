@@ -5,6 +5,9 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Get,
+  Param,
+  Query,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { VerifyAccountDTO } from "src/dto/user/VerifyAccountDTO";
@@ -58,6 +61,18 @@ export class UserController {
     if (result === EOperations.SUCESS) {
       return;
     }
+  }
+
+  @Get(":id")
+  @HttpCode(200)
+  async getDataById(@Param("id") id: string) {
+    const result = await this.userService.getData(id);
+
+    if (result === EConfirmationCodeStatus.NOT_FOUND) {
+      throw new HttpException("Usuario nao encontrado", HttpStatus.NOT_FOUND);
+    }
+
+    return result;
   }
 
   @Post("password/change")

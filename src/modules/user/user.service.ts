@@ -160,6 +160,28 @@ export class UserService {
     }
   }
 
+  async getData(id: string): Promise<any> {
+    try {
+      const userSearchResult = await this.prismaClient.user.findUniqueOrThrow({
+        where: {
+          id: parseInt(id),
+        },
+        select: {
+          id: true,
+          email: true,
+          verify: true,
+        },
+      });
+      return userSearchResult;
+    } catch (exception) {
+      if (exception.code === "P2016") {
+        return EOperations.NOT_FOUND;
+      }
+
+      return exception;
+    }
+  }
+
   generateRandomFourDigits(): string {
     return Math.floor(1000 + Math.random() * 9000).toString();
   }
