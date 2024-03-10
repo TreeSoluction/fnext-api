@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
 }
 
 model User {
@@ -31,14 +31,34 @@ model Investor {
 }
 
 model Startup {
-  id         Int      @id @default(autoincrement())
-  name       String
-  phone      String
-  birth_date DateTime @db.Date
-  cnpj       String
-  created_at DateTime @default(now())
-  User       User     @relation(fields: [userId], references: [id])
-  userId     Int
+  id                  Int               @id @default(autoincrement())
+  name                String
+  phone               String
+  birth_date          DateTime          @db.Date
+  cnpj                String
+  created_at          DateTime          @default(now())
+  User                User              @relation(fields: [userId], references: [id])
+  userId              Int
+  completeRegister    Boolean?
+  haveAPlan           Boolean?
+  minimumInvestment   Float?
+  returnValue         Float?
+  monthlyBilling      Float?
+  brazilUnits         Float?
+  royalty             Float?
+  companyHeadquarters String?
+  observationNotes    String?
+  ModelOfBusiness     ModelOfBusiness[]
+}
+
+model ModelOfBusiness {
+  id                     Int     @id @default(autoincrement())
+  name                   String
+  capitalForInstallation Float
+  franchiseFee           Float
+  workingCapital         Float
+  Startup                Startup @relation(fields: [startupId], references: [id])
+  startupId              Int
 }
 
 model ConfirmationCode {
