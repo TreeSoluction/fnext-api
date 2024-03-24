@@ -10,10 +10,14 @@ import {
 import { PaymentService } from "./payment.service";
 import { paymentDto } from "src/dto/payment/paymentDto";
 import { EOperations } from "src/enums/operationsResults/EOperations";
+import { UserService } from "../user/user.service";
 
 @Controller("payment")
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly userService: UserService
+  ) {}
 
   // @Get()
   // @HttpCode(200)
@@ -25,10 +29,16 @@ export class PaymentController {
   @Post()
   @HttpCode(200)
   async createPayment(@Body() dto: paymentDto) {
+    var user = await this.userService.getData(dto.userId);
+
+    if (user.NOT_FOUND) {
+      throw new HttpException("Usuario nao encontrado", HttpStatus.NOT_FOUND);
+    }
+
     const result = await this.paymentService.createPayment(
-      dto.amount,
       dto.card,
-      dto.buyer
+      user.email,
+      dto.planNumber
     );
 
     if (result === EOperations.FAIL) {

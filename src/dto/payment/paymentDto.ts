@@ -4,9 +4,9 @@ import { cardDto } from "./cardDto";
 
 export class paymentDto {
   @IsNotEmpty()
-  amount: number;
+  planNumber: number;
   @IsNotEmpty()
-  buyer: buyerDto;
+  userId: string;
   @IsNotEmpty()
   card: cardDto;
 }
