@@ -5,40 +5,40 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_DIRECT_URL")
+  directUrl = env("DATABASE_URL")
 }
 
 model User {
-  id                 Int               @id @default(autoincrement())
-  password           String
-  email              String            @unique
-  verify             Boolean           @default(false)
-  Investor           Investor[]
-  Startup            Startup[]
-  ConfirmationCode   ConfirmationCode? @relation(fields: [confirmationCodeId], references: [id])
-  confirmationCodeId Int?
+  id         String   @id @default(uuid())
+  password   String
+  email      String   @unique
+  name       String
+  deleted    Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  Owner      Owner?
 }
 
-model Investor {
-  id         Int      @id @default(autoincrement())
+model Owner {
+  id         String     @id @default(uuid())
   name       String
   phone      String
-  birth_date DateTime @db.Date
+  birth_date DateTime   @db.Date
   cpf        String?
-  created_at DateTime @default(now())
-  User       User     @relation(fields: [userId], references: [id])
-  userId     Int
+  userId     String     @unique
+  User       User       @relation(fields: [userId], references: [id])
+  deleted    Boolean    @default(false)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  Business   Business[]
 }
 
-model Startup {
-  id                  Int               @id @default(autoincrement())
+model Business {
+  id                  String   @id @default(uuid())
   name                String
   phone               String
-  birth_date          DateTime          @db.Date
+  creation_date       DateTime @db.Date
   cnpj                String
-  created_at          DateTime          @default(now())
-  User                User              @relation(fields: [userId], references: [id])
-  userId              Int
   completeRegister    Boolean?
   haveAPlan           Boolean?
   minimumInvestment   Float?
@@ -48,22 +48,9 @@ model Startup {
   royalty             Float?
   companyHeadquarters String?
   observationNotes    String?
-  ModelOfBusiness     ModelOfBusiness[]
-}
-
-model ModelOfBusiness {
-  id                     Int     @id @default(autoincrement())
-  name                   String
-  capitalForInstallation Float
-  franchiseFee           Float
-  workingCapital         Float
-  Startup                Startup @relation(fields: [startupId], references: [id])
-  startupId              Int
-}
-
-model ConfirmationCode {
-  id          Int      @id @default(autoincrement())
-  code        String
-  creation_at DateTime @default(now())
-  User        User[]
+  ownerId             String
+  Owner               Owner    @relation(fields: [ownerId], references: [id])
+  deleted             Boolean  @default(false)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @default(now())
 }

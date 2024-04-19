@@ -1,5 +1,5 @@
 import { Injectable, Res } from "@nestjs/common";
-import { createStartupDTO } from "src/dto/create/createStartupDTO";
+import { createStartupDTO } from "src/dto/commands/create/createStartupDTO";
 import MercadoPagoConfig, {
   Payment,
   CardToken,
@@ -9,8 +9,8 @@ import MercadoPagoConfig, {
   PreApproval,
 } from "mercadopago";
 import axios from "axios";
-import { cardDto } from "src/dto/payment/cardDto";
-import { buyerDto } from "src/dto/payment/buyerDto";
+import { cardDto } from "src/dto/commands/payment/cardDto";
+import { buyerDto } from "src/dto/commands/payment/buyerDto";
 import { EOperations } from "src/enums/operationsResults/EOperations";
 import { Subscription } from "rxjs";
 import { log } from "console";
