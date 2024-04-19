@@ -8,84 +8,62 @@ import {
   Get,
   Param,
   Query,
+  BadRequestException,
+  NotFoundException,
+  Delete,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { VerifyAccountDTO } from "src/dto/user/VerifyAccountDTO";
+import { VerifyAccountDTO } from "src/dto/commands/user/VerifyAccountDTO";
 import { EConfirmationCodeStatus } from "src/enums/operationsResults/EConfirmationCodeStatus";
-import { PasswordResetDTO } from "src/dto/user/PasswordResetDTO";
-import { PasswordChangeDTO } from "src/dto/user/PasswordChangeDTO";
-import { EOperations } from "src/enums/operationsResults/EOperations";
+import { CreateUserDTO } from "src/dto/commands/user/CreateUserDTO";
 
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post("verify")
+  @Post()
   @HttpCode(200)
-  async verify(@Body() verifyAccountDto: VerifyAccountDTO) {
-    const result = await this.userService.confirmAccount(verifyAccountDto);
+  async register(@Body() dto: CreateUserDTO) {
+    const result = await this.userService.create(dto);
 
-    if (result === EConfirmationCodeStatus.INCORRECT) {
-      throw new HttpException("Codigo Incorreto", HttpStatus.CONFLICT);
-    }
-
-    if (result === EConfirmationCodeStatus.ALREADY_ACTIVE) {
-      throw new HttpException("Conta ja Ativada", HttpStatus.CONFLICT);
-    }
-
-    if (result === EConfirmationCodeStatus.NOT_FOUND) {
-      throw new HttpException("Usuario nao encontrado", HttpStatus.NOT_FOUND);
-    }
-
-    if (result === EConfirmationCodeStatus.OVERDUE) {
-      throw new HttpException(
-        "Codigo vencido, gere outro",
-        HttpStatus.CONFLICT
-      );
-    }
-
-    if (result === EConfirmationCodeStatus.CORRECT) {
-      return;
-    }
-  }
-
-  @Post("password/reset")
-  @HttpCode(200)
-  async resetPassword(@Body() dto: PasswordResetDTO) {
-    const result = await this.userService.passwordReset(dto);
-
-    if (result === EConfirmationCodeStatus.NOT_FOUND) {
-      throw new HttpException("Usuario nao encontrado", HttpStatus.NOT_FOUND);
-    }
-
-    if (result === EOperations.SUCESS) {
-      return;
-    }
-  }
-
-  @Get(":id")
-  @HttpCode(200)
-  async getDataById(@Param("id") id: string) {
-    const result = await this.userService.getData(id);
-
-    if (result === EConfirmationCodeStatus.NOT_FOUND) {
-      throw new HttpException("Usuario nao encontrado", HttpStatus.NOT_FOUND);
+    if (result.messages.length > 0) {
+      throw new BadRequestException(result);
     }
 
     return result;
   }
 
-  @Post("password/change")
+  @Get()
   @HttpCode(200)
-  async changePassword(@Body() dto: PasswordChangeDTO) {
-    const result = await this.userService.passwordChange(dto);
+  async getAll(
+    @Query("page") page?: number,
+    @Query("countPerPage") countPerPage?: number
+  ) {
+    const result = await this.userService.getAll(page, countPerPage);
+    return result;
+  }
 
-    if (result === EOperations.FAIL) {
-      throw new HttpException("Senha incorreta", HttpStatus.BAD_REQUEST);
+  @Get(":id")
+  @HttpCode(200)
+  async getDataById(@Param("id") id: string) {
+    const result = await this.userService.get(id);
+
+    if (result.messages.length > 0) {
+      throw new NotFoundException(result);
     }
 
-    if (result === EOperations.SUCESS) {
-      return;
+    return result;
+  }
+
+  @Delete(":id")
+  @HttpCode(200)
+  async delete(@Param("id") id: string) {
+    const result = await this.userService.deactive(id);
+
+    if (result.messages.length > 0) {
+      throw new NotFoundException(result);
     }
+
+    return result;
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { loginDTO } from "src/dto/login/loginDTO";
+import { loginDTO } from "src/dto/commands/login/loginDTO";
 import * as jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { EOperations } from "src/enums/operationsResults/EOperations";

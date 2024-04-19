@@ -1,10 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { createUserDTO } from "src/dto/create/createUserDTO";
-import { PasswordChangeDTO } from "src/dto/user/PasswordChangeDTO";
-import { PasswordResetDTO } from "src/dto/user/PasswordResetDTO";
-import { VerifyAccountDTO } from "src/dto/user/VerifyAccountDTO";
-import { EConfirmationCodeStatus } from "src/enums/operationsResults/EConfirmationCodeStatus";
+import { CreateUserDTO } from "src/dto/commands/user/CreateUserDTO";
+import { FenextMessage } from "src/dto/responses/fenextMessage";
+import { FenextResponse } from "src/dto/responses/fenextResponse";
 import { EOperations } from "src/enums/operationsResults/EOperations";
 import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 import criptografy from "src/helper/criptografy";
@@ -13,183 +11,117 @@ import criptografy from "src/helper/criptografy";
 export class UserService {
   constructor(private readonly prismaClient: PrismaClient) {}
 
-  async create(dto: createUserDTO): Promise<any> {
+  async create(dto: CreateUserDTO): Promise<FenextResponse> {
     try {
+      if (dto.password.length < 8) {
+        return new FenextResponse(
+          [
+            new FenextMessage(
+              EOperations.BAD_INPUT,
+              "Password must have at least 8 characters"
+            ),
+          ],
+          null
+        );
+      }
+
       const passwordManager = new criptografy();
 
-      const ConfirmatioCodeRegisterResult =
-        await this.prismaClient.confirmationCode.create({
-          data: {
-            code: this.generateRandomFourDigits(),
-          },
-        });
-
-      const UserRegisterResult = await this.prismaClient.user.create({
+      const userRegisterResult = await this.prismaClient.user.create({
         data: {
-          email: dto.email,
+          name: dto.fullName.toUpperCase(),
+          email: dto.email.toUpperCase(),
           password: await passwordManager.hashPassword(dto.password),
-          confirmationCodeId: ConfirmatioCodeRegisterResult.id,
         },
       });
 
-      return UserRegisterResult;
+      return new FenextResponse(new Array<FenextMessage>(), {
+        id: userRegisterResult.id,
+        name: userRegisterResult.name,
+        email: userRegisterResult.email,
+      });
     } catch (exception) {
-      if (exception.code === "P2002")
-        return ERegisterOperation.EMAIL_ALREADY_TAKEN;
-    }
-  }
+      let messages = new Array<FenextMessage>();
 
-  async confirmAccount(
-    dto: VerifyAccountDTO
-  ): Promise<EConfirmationCodeStatus> {
-    try {
-      const UserResult = await this.prismaClient.user.findFirstOrThrow({
-        where: { id: dto.userid },
-      });
-
-      if (UserResult.verify === true) {
-        return EConfirmationCodeStatus.ALREADY_ACTIVE;
-      }
-
-      const ConfirmationCodeResult =
-        await this.prismaClient.confirmationCode.findFirstOrThrow({
-          where: { id: UserResult.confirmationCodeId },
-        });
-
-      if (ConfirmationCodeResult.creation_at.getHours() > 24) {
-        return EConfirmationCodeStatus.OVERDUE;
-      }
-
-      if (ConfirmationCodeResult.code === dto.code) {
-        await this.prismaClient.user.update({
-          where: { id: dto.userid },
-          data: {
-            verify: true,
-          },
-        });
-
-        const userResult = await this.prismaClient.user.findUnique({
-          where: { id: dto.userid },
-        });
-
-        await this.prismaClient.confirmationCode.delete({
-          where: { id: userResult.confirmationCodeId },
-        });
-
-        return EConfirmationCodeStatus.CORRECT;
-      }
-    } catch (exception) {
-      if (exception.code === "P2016") {
-        return EConfirmationCodeStatus.NOT_FOUND;
-      }
-
-      return exception;
-    }
-  }
-
-  async passwordReset(dto: PasswordResetDTO): Promise<any> {
-    try {
-      const passwordManager = new criptografy();
-
-      await this.prismaClient.user.findFirstOrThrow({
-        where: {
-          email: dto.email,
-        },
-      });
-
-      await this.prismaClient.user.update({
-        where: {
-          email: dto.email,
-        },
-        data: {
-          password: await passwordManager.hashPassword(
-            this.generateRandomPassword()
-          ),
-        },
-      });
-
-      return EOperations.SUCESS;
-    } catch (exception) {
       if (exception.code === "P2002") {
-        return ERegisterOperation.EMAIL_ALREADY_TAKEN;
+        messages.push(
+          new FenextMessage(EOperations.CONFLICT, "This email already taken")
+        );
       }
 
-      if (exception.code === "P2016") {
-        return EConfirmationCodeStatus.NOT_FOUND;
-      }
-
-      return exception;
+      return new FenextResponse(messages, null);
     }
   }
 
-  async passwordChange(dto: PasswordChangeDTO): Promise<any> {
-    try {
-      const passwordManager = new criptografy();
-
-      const userSearchResult = await this.prismaClient.user.findFirstOrThrow({
-        where: {
-          id: dto.id,
-        },
-      });
-
-      const passwordVerification = await passwordManager.comparePasswords(
-        dto.password,
-        userSearchResult.password
-      );
-
-      if (!passwordVerification) {
-        return EOperations.FAIL;
-      }
-
-      await this.prismaClient.user.update({
-        where: {
-          id: dto.id,
-        },
-        data: {
-          password: await passwordManager.hashPassword(dto.newPassword),
-        },
-      });
-
-      return EOperations.SUCESS;
-    } catch (exception) {
-      if (exception.code === "P2016") {
-        return EOperations.NOT_FOUND;
-      }
-
-      return exception;
-    }
-  }
-
-  async getData(id: string): Promise<any> {
+  async get(id: string): Promise<FenextResponse> {
     try {
       const userSearchResult = await this.prismaClient.user.findUniqueOrThrow({
         where: {
-          id: parseInt(id),
+          id: id,
         },
         select: {
           id: true,
           email: true,
-          verify: true,
+          name: true,
         },
       });
-      return userSearchResult;
+      return new FenextResponse(new Array<FenextMessage>(), userSearchResult);
     } catch (exception) {
+      let messages = new Array<FenextMessage>();
+
       if (exception.code === "P2016") {
-        return EOperations.NOT_FOUND;
+        messages.push(
+          new FenextMessage(EOperations.NOT_FOUND, "This user not found")
+        );
       }
 
-      return exception;
+      return new FenextResponse(messages, null);
     }
   }
 
-  generateRandomFourDigits(): string {
-    return Math.floor(1000 + Math.random() * 9000).toString();
+  async getAll(page: number, countPerPage: number): Promise<FenextResponse> {
+    try {
+      const userSearchResult = await this.prismaClient.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+        },
+        skip: countPerPage * page || 0,
+        take: countPerPage || undefined,
+      });
+
+      return new FenextResponse(new Array<FenextMessage>(), userSearchResult);
+    } catch (exception) {
+      let messages = new Array<FenextMessage>();
+      return new FenextResponse(messages, null);
+    }
   }
 
-  generateRandomPassword(): string {
-    const randonPassword = Math.random().toString(36).slice(-6);
-    console.log(randonPassword);
+  async deactive(id: string): Promise<FenextResponse> {
+    try {
+      const passwordManager = new criptografy();
 
-    return randonPassword;
+      const userDeactiveResult = await this.prismaClient.user.update({
+        data: {
+          deleted: true,
+        },
+        where: {
+          id: id,
+        },
+      });
+
+      return new FenextResponse(new Array<FenextMessage>(), userDeactiveResult);
+    } catch (exception) {
+      let messages = new Array<FenextMessage>();
+
+      if (exception.code === "P2016") {
+        messages.push(
+          new FenextMessage(EOperations.NOT_FOUND, "This user not found")
+        );
+      }
+
+      return new FenextResponse(messages, null);
+    }
   }
 }

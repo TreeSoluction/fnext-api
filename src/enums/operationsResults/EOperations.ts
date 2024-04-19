@@ -1,5 +1,6 @@
 export enum EOperations {
-  SUCESS,
   NOT_FOUND,
   FAIL,
+  CONFLICT,
+  BAD_INPUT,
 }
