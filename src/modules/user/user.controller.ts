@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   HttpCode,
-  HttpException,
-  HttpStatus,
   Post,
   Get,
   Param,
@@ -13,17 +11,17 @@ import {
   Delete,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { VerifyAccountDTO } from "src/dto/commands/user/VerifyAccountDTO";
-import { EConfirmationCodeStatus } from "src/enums/operationsResults/EConfirmationCodeStatus";
-import { CreateUserDTO } from "src/dto/commands/user/CreateUserDTO";
+import IController from "src/domain/interfaces/IController";
+import { CreateUserDTO } from "src/domain/interfaces/dto/commands/user/CreateUserDTO";
+import { FenextResponse } from "src/domain/interfaces/dto/responses/fenextResponse";
 
 @Controller("user")
-export class UserController {
+export class UserController implements IController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
   @HttpCode(200)
-  async register(@Body() dto: CreateUserDTO) {
+  async register(@Body() dto: CreateUserDTO): Promise<FenextResponse> {
     const result = await this.userService.create(dto);
 
     if (result.messages.length > 0) {

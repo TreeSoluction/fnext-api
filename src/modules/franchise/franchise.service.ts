@@ -1,56 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { CreateUserDTO } from "src/domain/interfaces/dto/commands/user/CreateUserDTO";
+import { CreateFranchiseDTO } from "src/domain/interfaces/dto/commands/franchise/CreateFranchiseDTO";
 import { FenextMessage } from "src/domain/interfaces/dto/responses/fenextMessage";
 import { FenextResponse } from "src/domain/interfaces/dto/responses/fenextResponse";
 import { EOperations } from "src/enums/operationsResults/EOperations";
-import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 import criptografy from "src/helper/criptografy";
 
 @Injectable()
-export class UserService {
+export class FranchiseService {
   constructor(private readonly prismaClient: PrismaClient) {}
 
-  async create(dto: CreateUserDTO): Promise<FenextResponse> {
+  async create(dto: CreateFranchiseDTO): Promise<FenextResponse> {
     try {
-      if (dto.password.length < 8) {
-        return new FenextResponse(
-          [
-            new FenextMessage(
-              EOperations.BAD_INPUT,
-              "Password must have at least 8 characters"
-            ),
-          ],
-          null
-        );
-      }
+      if()
 
-      const passwordManager = new criptografy();
+      
 
-      const userRegisterResult = await this.prismaClient.user.create({
-        data: {
-          name: dto.fullName.toUpperCase(),
-          email: dto.email.toUpperCase(),
-          password: await passwordManager.hashPassword(dto.password),
-        },
-      });
-
-      return new FenextResponse(new Array<FenextMessage>(), {
-        id: userRegisterResult.id,
-        name: userRegisterResult.name,
-        email: userRegisterResult.email,
-      });
-    } catch (exception) {
-      let messages = new Array<FenextMessage>();
-
-      if (exception.code === "P2002") {
-        messages.push(
-          new FenextMessage(EOperations.CONFLICT, "This email already taken")
-        );
-      }
-
-      return new FenextResponse(messages, null);
-    }
+    } catch (exception) {}
   }
 
   async get(id: string): Promise<FenextResponse> {
