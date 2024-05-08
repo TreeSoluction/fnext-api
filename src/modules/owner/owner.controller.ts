@@ -10,19 +10,23 @@ import {
   NotFoundException,
   Delete,
 } from "@nestjs/common";
-import { UserService } from "./user.service";
 import IController from "src/domain/interfaces/IController";
-import { CreateUserDTO } from "./dto/CreateUserDTO";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
+import { OwnerService } from "./owner.service";
+import { CreateOwnerDTO } from "./dto/CreateOwnerDTO";
 
-@Controller("user")
-export class UserController implements IController {
-  constructor(private readonly userService: UserService) {}
+@Controller("owner")
+export class OwnerController implements IController {
+  constructor(private readonly service: OwnerService) {}
+
+  getById(id: string): Promise<FenextResponse> {
+    throw new Error("Method not implemented.");
+  }
 
   @Post()
   @HttpCode(200)
-  async register(@Body() dto: CreateUserDTO): Promise<FenextResponse> {
-    const result = await this.userService.create(dto);
+  async register(@Body() dto: CreateOwnerDTO): Promise<FenextResponse> {
+    const result = await this.service.create(dto);
 
     if (result.messages.length > 0) {
       throw new BadRequestException(result);
@@ -37,14 +41,14 @@ export class UserController implements IController {
     @Query("page") page?: number,
     @Query("countPerPage") countPerPage?: number
   ) {
-    const result = await this.userService.getAll(page, countPerPage);
+    const result = await this.service.getAll(page, countPerPage);
     return result;
   }
 
   @Get(":id")
   @HttpCode(200)
-  async getById(@Param("id") id: string) {
-    const result = await this.userService.get(id);
+  async getDataById(@Param("id") id: string) {
+    const result = await this.service.get(id);
 
     if (result.messages.length > 0) {
       throw new NotFoundException(result);
@@ -56,7 +60,7 @@ export class UserController implements IController {
   @Delete(":id")
   @HttpCode(200)
   async delete(@Param("id") id: string) {
-    const result = await this.userService.deactive(id);
+    const result = await this.service.deactive(id);
 
     if (result.messages.length > 0) {
       throw new NotFoundException(result);

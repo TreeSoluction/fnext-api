@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Owner" ALTER COLUMN "birth_date" SET DATA TYPE TIMESTAMP(3);

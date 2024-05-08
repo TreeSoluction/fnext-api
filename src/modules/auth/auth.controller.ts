@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { EOperations } from "src/enums/operationsResults/EOperations";
-import { loginDTO } from "src/domain/interfaces/dto/commands/login/loginDTO";
+import { loginDTO } from "./dto/loginDTO";
 
 @Controller("auth")
 export class AuthController {

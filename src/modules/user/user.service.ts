@@ -1,11 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
-import { CreateUserDTO } from "src/domain/interfaces/dto/commands/user/CreateUserDTO";
-import { FenextMessage } from "src/domain/interfaces/dto/responses/fenextMessage";
-import { FenextResponse } from "src/domain/interfaces/dto/responses/fenextResponse";
+import { FenextMessage } from "src/domain/responses/fenextMessage";
+import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { EOperations } from "src/enums/operationsResults/EOperations";
-import { ERegisterOperation } from "src/enums/operationsResults/ERegisterOperation";
 import criptografy from "src/helper/criptografy";
+import { CreateUserDTO } from "./dto/CreateUserDTO";
 
 @Injectable()
 export class UserService {

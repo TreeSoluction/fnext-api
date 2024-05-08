@@ -4,24 +4,54 @@ import {
   HttpCode,
   Post,
   BadRequestException,
+  Delete,
+  NotFoundException,
+  Param,
+  Get,
 } from "@nestjs/common";
 import { FranchiseService } from "./franchise.service";
 import IController from "src/domain/interfaces/IController";
-import { FenextResponse } from "src/domain/interfaces/dto/responses/fenextResponse";
-import { CreateFranchiseDTO } from "src/domain/interfaces/dto/commands/franchise/CreateFranchiseDTO";
+import { FenextResponse } from "src/domain/responses/fenextResponse";
+import { CreateFranchiseDTO } from "src/modules/franchise/dto/CreateFranchiseDTO";
 
-@Controller("user")
+@Controller("franchise")
 export class FranchiseController implements IController {
   constructor(private readonly service: FranchiseService) {}
 
-  getAll(page?: number, countPerPage?: number): Promise<FenextResponse> {
-    throw new Error("Method not implemented.");
+  @Get(":id")
+  @HttpCode(200)
+  async getById(@Param("id") id: string) {
+    const result = await this.service.get(id);
+
+    if (result.messages.length > 0) {
+      throw new NotFoundException(result);
+    }
+
+    return result;
   }
-  getById(id: string): Promise<FenextResponse> {
-    throw new Error("Method not implemented.");
+
+  @Get()
+  @HttpCode(200)
+  async getAll(page?: number, countPerPage?: number): Promise<FenextResponse> {
+    const result = await this.service.getAll(page, countPerPage);
+
+    if (result.messages.length > 0) {
+      throw new BadRequestException(result);
+    }
+
+    return result;
   }
-  delete(id: string): Promise<FenextResponse> {
-    throw new Error("Method not implemented.");
+
+  @Delete()
+  @HttpCode(200)
+  async delete(id: string): Promise<FenextResponse> {
+    const result = await this.service.deactive(id);
+
+    if (result.messages.length > 0) {
+      throw new BadRequestException(result);
+    }
+
+    return result;
   }
 
   @Post()
