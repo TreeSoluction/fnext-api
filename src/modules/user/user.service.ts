@@ -5,6 +5,7 @@ import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { EOperations } from "src/enums/operationsResults/EOperations";
 import criptografy from "src/helper/criptografy";
 import { CreateUserDTO } from "./dto/CreateUserDTO";
+import { UpdateUserDTO } from "./dto/UpdateUserDTO";
 
 @Injectable()
 export class UserService {
@@ -38,6 +39,36 @@ export class UserService {
         id: userRegisterResult.id,
         name: userRegisterResult.name,
         email: userRegisterResult.email,
+      });
+    } catch (exception) {
+      let messages = new Array<FenextMessage>();
+
+      if (exception.code === "P2002") {
+        messages.push(
+          new FenextMessage(EOperations.CONFLICT, "This email already taken")
+        );
+      }
+
+      return new FenextResponse(messages, null);
+    }
+  }
+
+  async update(dto: UpdateUserDTO): Promise<FenextResponse> {
+    try {
+      const userUpdateResult = await this.prismaClient.user.update({
+        data: {
+          name: dto.fullName.toUpperCase(),
+          email: dto.email.toUpperCase(),
+        },
+        where: {
+          id: dto.id,
+        },
+      });
+
+      return new FenextResponse(new Array<FenextMessage>(), {
+        id: userUpdateResult.id,
+        name: userUpdateResult.name,
+        email: userUpdateResult.email,
       });
     } catch (exception) {
       let messages = new Array<FenextMessage>();

@@ -9,11 +9,13 @@ import {
   BadRequestException,
   NotFoundException,
   Delete,
+  Put,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import IController from "src/domain/interfaces/IController";
 import { CreateUserDTO } from "./dto/CreateUserDTO";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
+import { UpdateUserDTO } from "./dto/UpdateUserDTO";
 
 @Controller("user")
 export class UserController implements IController {
@@ -38,6 +40,13 @@ export class UserController implements IController {
     @Query("countPerPage") countPerPage?: number
   ) {
     const result = await this.userService.getAll(page, countPerPage);
+    return result;
+  }
+
+  @Put()
+  @HttpCode(200)
+  async update(@Body() dto: UpdateUserDTO): Promise<FenextResponse> {
+    const result = await this.userService.update(dto);
     return result;
   }
 
