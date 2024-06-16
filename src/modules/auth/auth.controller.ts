@@ -7,8 +7,8 @@ import {
   HttpException,
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { loginDTO } from "src/dto/commands/login/loginDTO";
 import { EOperations } from "src/enums/operationsResults/EOperations";
+import { loginDTO } from "./dto/loginDTO";
 
 @Controller("auth")
 export class AuthController {

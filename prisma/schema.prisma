@@ -23,8 +23,8 @@ model Owner {
   id         String     @id @default(uuid())
   name       String
   phone      String
-  birth_date DateTime   @db.Date
-  cpf        String?
+  birth_date DateTime   
+  cpf        String?    @unique
   userId     String     @unique
   User       User       @relation(fields: [userId], references: [id])
   deleted    Boolean    @default(false)
@@ -34,23 +34,43 @@ model Owner {
 }
 
 model Business {
-  id                  String   @id @default(uuid())
-  name                String
-  phone               String
-  creation_date       DateTime @db.Date
-  cnpj                String
-  completeRegister    Boolean?
-  haveAPlan           Boolean?
-  minimumInvestment   Float?
-  returnValue         Float?
-  monthlyBilling      Float?
-  brazilUnits         Float?
-  royalty             Float?
-  companyHeadquarters String?
-  observationNotes    String?
-  ownerId             String
-  Owner               Owner    @relation(fields: [ownerId], references: [id])
-  deleted             Boolean  @default(false)
-  created_at          DateTime @default(now())
-  updated_at          DateTime @default(now())
+  id                      String   @id @default(uuid())
+  Owner                   Owner    @relation(fields: [ownerId], references: [id])
+  ownerId                 String   
+  deleted                 Boolean  @default(false)
+  created_at              DateTime @default(now())
+  updated_at              DateTime @default(now())
+  sector                  String
+  name                    String
+  description             String
+  logo                    String
+  images                  Json
+  videos                  Json
+  site                    String
+  average_monthly_billing Float
+  units_in_brazil         Int
+  headquarters            String
+  ROI_min                 Float
+  ROI_max                 Float
+  Models                  Models[]
+}
+
+model Models {
+  id                              String   @id @default(uuid())
+  Business                        Business @relation(fields: [businessId], references: [id])
+  businessId                      String
+  name                            String
+  capital_for_instalation         Float
+  capital_for_instalation_isFixed Boolean
+  working_capital                 Float
+  working_capital_isFixed         Boolean
+  franchise_fee                   Float
+  franchise_fee_isFixed           Boolean
+  marketing_fee                   Float
+  marketing_fee_isFixed           Boolean
+  has_store_area                  Boolean
+  store_area_min                  Float?
+  store_area_max                  Float?
+  royalties                       Float
+  royalties_isFixed               Float
 }

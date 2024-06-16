@@ -4,48 +4,36 @@ import { FenextMessage } from "src/domain/responses/fenextMessage";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { EOperations } from "src/enums/operationsResults/EOperations";
 import criptografy from "src/helper/criptografy";
-import { CreateUserDTO } from "./dto/CreateUserDTO";
+import { CreateOwnerDTO } from "./dto/CreateOwnerDTO";
 
 @Injectable()
-export class UserService {
+export class OwnerService {
   constructor(private readonly prismaClient: PrismaClient) {}
 
-  async create(dto: CreateUserDTO): Promise<FenextResponse> {
+  async create(dto: CreateOwnerDTO): Promise<FenextResponse> {
     try {
-      if (dto.password.length < 8) {
-        return new FenextResponse(
-          [
-            new FenextMessage(
-              EOperations.BAD_INPUT,
-              "Password must have at least 8 characters"
-            ),
-          ],
-          null
-        );
-      }
-
-      const passwordManager = new criptografy();
-
-      const userRegisterResult = await this.prismaClient.user.create({
+      const result = await this.prismaClient.owner.create({
         data: {
-          name: dto.fullName.toUpperCase(),
-          email: dto.email.toUpperCase(),
-          password: await passwordManager.hashPassword(dto.password),
+          birth_date: new Date(dto.birth_date),
+          cpf: dto.cpf,
+          name: dto.name,
+          phone: dto.phone,
+          User: { connect: { id: dto.userID } },
         },
       });
 
-      return new FenextResponse(new Array<FenextMessage>(), {
-        id: userRegisterResult.id,
-        name: userRegisterResult.name,
-        email: userRegisterResult.email,
-      });
+      return new FenextResponse(new Array<FenextMessage>(), result);
     } catch (exception) {
       let messages = new Array<FenextMessage>();
-
-      if (exception.code === "P2002") {
+      if (exception.code === "P2014") {
         messages.push(
-          new FenextMessage(EOperations.CONFLICT, "This email already taken")
+          new FenextMessage(
+            EOperations.CONFLICT,
+            "This user or cpf already taken"
+          )
         );
+      } else {
+        messages.push(new FenextMessage(EOperations.FAIL, exception));
       }
 
       return new FenextResponse(messages, null);
@@ -54,15 +42,11 @@ export class UserService {
 
   async get(id: string): Promise<FenextResponse> {
     try {
-      const userSearchResult = await this.prismaClient.user.findUniqueOrThrow({
+      const userSearchResult = await this.prismaClient.owner.findUniqueOrThrow({
         where: {
           id: id,
         },
-        select: {
-          id: true,
-          email: true,
-          name: true,
-        },
+        include: { Business: true },
       });
       return new FenextResponse(new Array<FenextMessage>(), userSearchResult);
     } catch (exception) {
@@ -70,7 +54,7 @@ export class UserService {
 
       if (exception.code === "P2016") {
         messages.push(
-          new FenextMessage(EOperations.NOT_FOUND, "This user not found")
+          new FenextMessage(EOperations.NOT_FOUND, "This owner not found")
         );
       }
 
@@ -80,12 +64,7 @@ export class UserService {
 
   async getAll(page: number, countPerPage: number): Promise<FenextResponse> {
     try {
-      const userSearchResult = await this.prismaClient.user.findMany({
-        select: {
-          id: true,
-          email: true,
-          name: true,
-        },
+      const userSearchResult = await this.prismaClient.owner.findMany({
         skip: countPerPage * page || 0,
         take: countPerPage || undefined,
       });
@@ -99,9 +78,7 @@ export class UserService {
 
   async deactive(id: string): Promise<FenextResponse> {
     try {
-      const passwordManager = new criptografy();
-
-      const userDeactiveResult = await this.prismaClient.user.update({
+      const result = await this.prismaClient.owner.update({
         data: {
           deleted: true,
         },
@@ -110,13 +87,13 @@ export class UserService {
         },
       });
 
-      return new FenextResponse(new Array<FenextMessage>(), userDeactiveResult);
+      return new FenextResponse(new Array<FenextMessage>(), result);
     } catch (exception) {
       let messages = new Array<FenextMessage>();
 
       if (exception.code === "P2016") {
         messages.push(
-          new FenextMessage(EOperations.NOT_FOUND, "This user not found")
+          new FenextMessage(EOperations.NOT_FOUND, "This owner not found")
         );
       }
 
