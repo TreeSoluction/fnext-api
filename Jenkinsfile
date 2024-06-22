@@ -6,7 +6,7 @@ pipeline {
                 nodejs "node"
             }
             steps {
-                sh 'npm install'
+                sh 'yarn install'
             }
         }
   }
