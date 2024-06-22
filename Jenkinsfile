@@ -9,5 +9,13 @@ pipeline {
                 sh 'yarn install'
             }
         }
+        stage('Build Project') {
+            tools {
+                nodejs "node"
+            }
+            steps {
+                sh 'yarn build'
+            }
+        }
   }
 }
