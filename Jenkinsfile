@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Update Deployment') {
             steps {
-                sh 'cp -r * /srv/data/www/fenext/api'
+                sh 'sudo cp -r * /srv/data/www/fenext/api'
             }
         }
   }
