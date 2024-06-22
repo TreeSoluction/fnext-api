@@ -17,5 +17,10 @@ pipeline {
                 sh 'yarn build'
             }
         }
+        stage('Update Deployment') {
+            steps {
+                sh 'cp * /srv/data/www/fenext/api'
+            }
+        }
   }
 }
