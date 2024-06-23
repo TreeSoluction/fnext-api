@@ -19,12 +19,8 @@ pipeline {
         }
         stage('Update Deployment') {
             steps {
-                step ("Clean directory"){ 
-                    sh 'sudo rm * -r /srv/data/www/fenext/api'
-                }
-                step ("Copy Files"){ 
-                    sh 'cp -r * /srv/data/www/fenext/api'
-                }
+                sh 'sudo rm * -r /srv/data/www/fenext/api'
+                sh 'cp -r * /srv/data/www/fenext/api'
             }
         }
   }
