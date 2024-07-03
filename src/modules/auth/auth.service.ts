@@ -17,7 +17,7 @@ export class AuthService {
     try {
       const userSearchResult = await this.prismaClient.user.findUniqueOrThrow({
         where: {
-          email: dto.email,
+          email: dto.email.toUpperCase(),
         },
       });
 
@@ -56,7 +56,11 @@ export class AuthService {
   }
 
   public generateToken(payload: any): string {
-    const token = jwt.sign(payload, this.secretKey, { expiresIn: "1h" });
-    return token;
+    try {
+      const token = jwt.sign(payload, this.secretKey, { expiresIn: "1h" });
+      return token;
+    } catch (error) {
+      console.log("Error when generate token");
+    }
   }
 }
