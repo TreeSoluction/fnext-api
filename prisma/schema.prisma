@@ -9,21 +9,31 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  password   String
-  email      String   @unique
-  name       String
-  deleted    Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
-  Owner      Owner?
+  id                 String               @id @default(uuid())
+  password           String
+  email              String               @unique
+  name               String
+  deleted            Boolean              @default(false)
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @default(now())
+  Owner              Owner?
+  FavoriteFranchises FavoriteFranchises[]
+}
+
+model FavoriteFranchises {
+  User       User     @relation(fields: [userId], references: [id])
+  Business   Business @relation(fields: [businessId], references: [id])
+  userId     String
+  businessId String
+
+  @@id([userId, businessId])
 }
 
 model Owner {
   id         String     @id @default(uuid())
   name       String
   phone      String
-  birth_date DateTime   
+  birth_date DateTime
   cpf        String?    @unique
   userId     String     @unique
   User       User       @relation(fields: [userId], references: [id])
@@ -34,12 +44,12 @@ model Owner {
 }
 
 model Business {
-  id                      String   @id @default(uuid())
-  Owner                   Owner    @relation(fields: [ownerId], references: [id])
-  ownerId                 String   
-  deleted                 Boolean  @default(false)
-  created_at              DateTime @default(now())
-  updated_at              DateTime @default(now())
+  id                      String               @id @default(uuid())
+  Owner                   Owner                @relation(fields: [ownerId], references: [id])
+  ownerId                 String
+  deleted                 Boolean              @default(false)
+  created_at              DateTime             @default(now())
+  updated_at              DateTime             @default(now())
   sector                  String
   name                    String
   description             String
@@ -53,6 +63,7 @@ model Business {
   ROI_min                 Float
   ROI_max                 Float
   Models                  Models[]
+  FavoriteFranchises      FavoriteFranchises[]
 }
 
 model Models {
