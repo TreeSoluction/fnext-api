@@ -1,14 +1,16 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UseGuards } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { CreateFranchiseDTO } from "src/modules/franchise/dto/CreateFranchiseDTO";
 import { FenextMessage } from "src/domain/responses/fenextMessage";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { EOperations } from "src/enums/operationsResults/EOperations";
+import { IsAuth } from "src/guards/IsAuth.guard";
 
 @Injectable()
 export class FranchiseService {
   constructor(private readonly prismaClient: PrismaClient) {}
 
+  @UseGuards(IsAuth)
   async create(dto: CreateFranchiseDTO): Promise<FenextResponse> {
     try {
       const result = await this.prismaClient.business.create({

@@ -46,12 +46,12 @@ export class AuthService {
     }
   }
 
-  public verifyToken(token: string): any {
+  public verifyToken(token: string): boolean {
     try {
-      const decoded = jwt.verify(token, this.secretKey);
-      return decoded;
+      jwt.verify(token.split(" ")[1], this.secretKey);
+      return true;
     } catch (error) {
-      throw new Error("Invalid token");
+      return false;
     }
   }
 
@@ -59,8 +59,6 @@ export class AuthService {
     try {
       const token = jwt.sign(payload, this.secretKey, { expiresIn: "1h" });
       return token;
-    } catch (error) {
-      console.log("Error when generate token");
-    }
+    } catch (error) {}
   }
 }

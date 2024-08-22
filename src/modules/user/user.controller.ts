@@ -14,6 +14,7 @@ import {
   Patch,
   Header,
   Req,
+  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import IController from "src/domain/interfaces/IController";
@@ -22,7 +23,9 @@ import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { UpdateUserDTO } from "./dto/UpdateUserDTO";
 import IUserController from "src/domain/interfaces/IUserController";
 import * as jwt from "jsonwebtoken";
+import { IsAuth } from "src/guards/IsAuth.guard";
 
+@UseGuards(IsAuth)
 @Controller("user")
 export class UserController implements IController, IUserController {
   constructor(private readonly userService: UserService) {}

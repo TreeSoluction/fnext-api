@@ -8,11 +8,13 @@ import {
   NotFoundException,
   Param,
   Get,
+  UseGuards,
 } from "@nestjs/common";
 import { FranchiseService } from "./franchise.service";
 import IController from "src/domain/interfaces/IController";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { CreateFranchiseDTO } from "src/modules/franchise/dto/CreateFranchiseDTO";
+import { IsAuth } from "src/guards/IsAuth.guard";
 
 @Controller("franchise")
 export class FranchiseController implements IController {
@@ -54,6 +56,7 @@ export class FranchiseController implements IController {
     return result;
   }
 
+  @UseGuards(IsAuth)
   @Post()
   @HttpCode(200)
   async register(@Body() dto: CreateFranchiseDTO) {

@@ -9,12 +9,15 @@ import {
   BadRequestException,
   NotFoundException,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import IController from "src/domain/interfaces/IController";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { OwnerService } from "./owner.service";
 import { CreateOwnerDTO } from "./dto/CreateOwnerDTO";
+import { IsAuth } from "src/guards/IsAuth.guard";
 
+@UseGuards(IsAuth)
 @Controller("owner")
 export class OwnerController implements IController {
   constructor(private readonly service: OwnerService) {}
