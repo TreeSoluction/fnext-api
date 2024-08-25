@@ -32,5 +32,18 @@ jobs:
             send \"exit\r\"
             expect eof
           "
+
+      - name: Confirmation file
+        run: |
+          expect -c "
+            spawn ssh -o StrictHostKeyChecking=no guilherme@45.70.46.240
+            expect \"password:\"
+            send \"${{ secrets.SSH_PASSWORD }}\r\"
+            expect \"$\"
+            send \"touch confim.file\r\"
+            expect \"$\"
+            send \"exit\r\"
+            expect eof
+          "
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
