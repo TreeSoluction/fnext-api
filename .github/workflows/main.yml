@@ -25,7 +25,7 @@ jobs:
             expect \"$\"
             send \"cd /data/apps/fenext-api\r\"
             expect \"$\"
-            send \"git pull origin main\r\"
+            send \"git pull \r\"
             expect \"$\"
             send \"yarn install\r\"
             expect \"$\"
