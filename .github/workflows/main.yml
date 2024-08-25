@@ -35,10 +35,11 @@ jobs:
       
             send \"yarn install\r\"
             
-            expect {
-              \"\$ \" { send \"exit\r\"; exp_continue }
-              timeout { send_user \"Timed out waiting for yarn install to complete\n\"; exit 1 }
-            }
+          expect {
+            -re \"(Done in [0-9]+m[0-9]+s)\" { send \"exit\r\"; exp_continue }
+            -re \"(Done in [0-9]+s)\" { send \"exit\r\"; exp_continue }
+            timeout 600 { send_user \"Timed out waiting for yarn install to complete\n\"; exit 1 }
+          }
             
             send \"exit\r\"
             expect eof
