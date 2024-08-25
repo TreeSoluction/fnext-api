@@ -22,28 +22,27 @@ jobs:
             spawn ssh -o StrictHostKeyChecking=no guilherme@45.70.46.240
             expect \"password:\"
             send \"${{ secrets.SSH_PASSWORD }}\r\"
-            expect \"$\"
+            
+            # Wait for the shell prompt after SSH login
+            expect \"\$ \"
+            
+            # Change to the application directory
             send \"cd data/apps/fenext-api\r\"
-            expect \"$\"
-            send \"git pull \r\"
-            expect \"$\"
+            expect \"\$ \"
+      
+            send \"git pull\r\"
+            expect \"\$ \"
+      
             send \"yarn install\r\"
-            expect \"$\"
+            
+            expect {
+              \"\$ \" { send \"exit\r\"; exp_continue }
+              timeout { send_user \"Timed out waiting for yarn install to complete\n\"; exit 1 }
+            }
+            
             send \"exit\r\"
             expect eof
           "
-
-      - name: Confirmation file
-        run: |
-          expect -c "
-            spawn ssh -o StrictHostKeyChecking=no guilherme@45.70.46.240
-            expect \"password:\"
-            send \"${{ secrets.SSH_PASSWORD }}\r\"
-            expect \"$\"
-            send \"touch confim.file\r\"
-            expect \"$\"
-            send \"exit\r\"
-            expect eof
-          "
+      
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
