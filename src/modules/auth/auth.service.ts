@@ -19,6 +19,9 @@ export class AuthService {
         where: {
           email: dto.email.toUpperCase(),
         },
+        include: {
+          Owner: true,
+        },
       });
 
       const passwordManager = new criptografy();
@@ -33,7 +36,10 @@ export class AuthService {
         const token = this.generateToken({ email: dto.email });
         const response = {
           token: token,
-          name: userSearchResult.email,
+          name: userSearchResult.name,
+          email: userSearchResult.email,
+          id: userSearchResult.id,
+          owner: userSearchResult.Owner,
         };
         return response;
       }

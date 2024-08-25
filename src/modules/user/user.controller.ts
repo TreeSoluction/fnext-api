@@ -25,7 +25,6 @@ import IUserController from "src/domain/interfaces/IUserController";
 import * as jwt from "jsonwebtoken";
 import { IsAuth } from "src/guards/IsAuth.guard";
 
-@UseGuards(IsAuth)
 @Controller("user")
 export class UserController implements IController, IUserController {
   constructor(private readonly userService: UserService) {}

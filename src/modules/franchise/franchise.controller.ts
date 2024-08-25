@@ -56,7 +56,6 @@ export class FranchiseController implements IController {
     return result;
   }
 
-  @UseGuards(IsAuth)
   @Post()
   @HttpCode(200)
   async register(@Body() dto: CreateFranchiseDTO) {
