@@ -63,9 +63,16 @@ export class FranchiseService {
     }
   }
 
-  async getAll(page: number, countPerPage: number): Promise<FenextResponse> {
+  async getAll(
+    page: number,
+    countPerPage: number,
+    category?: string
+  ): Promise<FenextResponse> {
     try {
       const userSearchResult = await this.prismaClient.business.findMany({
+        where: {
+          sector: category || undefined,
+        },
         skip: countPerPage * page || 0,
         take: countPerPage || undefined,
       });
