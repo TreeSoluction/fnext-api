@@ -10,17 +10,21 @@ import {
   Get,
   UseGuards,
   Query,
+  Inject,
+  UseInterceptors,
 } from "@nestjs/common";
 import { FranchiseService } from "./franchise.service";
 import IController from "src/domain/interfaces/IController";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { CreateFranchiseDTO } from "src/modules/franchise/dto/CreateFranchiseDTO";
-import { IsAuth } from "src/guards/IsAuth.guard";
-import { log } from "console";
+import { Cache, CACHE_MANAGER, CacheInterceptor } from "@nestjs/cache-manager";
 
 @Controller("franchise")
 export class FranchiseController implements IController {
-  constructor(private readonly service: FranchiseService) {}
+  constructor(
+    private readonly service: FranchiseService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) {}
 
   @Get(":id")
   @HttpCode(200)
@@ -36,6 +40,7 @@ export class FranchiseController implements IController {
 
   @Get()
   @HttpCode(200)
+  @UseInterceptors(CacheInterceptor)
   async getAll(
     @Query("page")
     page?: number,
