@@ -17,6 +17,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post("login")
   async signIn(@Body() dto: loginDTO) {
+    console.log(`LOGIN TRY WITH ${dto.email} and ${dto.password}`);
+
     const response = await this.authService.signIn(dto);
 
     if (response === EOperations.FAIL) {

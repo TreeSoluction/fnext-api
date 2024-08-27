@@ -35,6 +35,8 @@ export class FranchiseController implements IController {
   @Get()
   @HttpCode(200)
   async getAll(page?: number, countPerPage?: number): Promise<FenextResponse> {
+    console.log(`FRANCHISE LOADING ${page} ${countPerPage}`);
+
     const result = await this.service.getAll(page, countPerPage);
 
     if (result.messages.length > 0) {
