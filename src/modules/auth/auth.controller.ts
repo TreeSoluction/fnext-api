@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { EOperations } from "src/enums/operationsResults/EOperations";
-import { loginDTO } from "./dto/loginDTO";
+import { loginDTO } from "./loginDTO";
 
 @Controller("auth")
 export class AuthController {
@@ -28,5 +28,17 @@ export class AuthController {
       throw new HttpException("User not founded", HttpStatus.NOT_FOUND);
     }
     return response;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post("verifyAuth")
+  async verifyAuth(@Body() token: string) {
+    const response = await this.authService.verifyToken(token);
+
+    if (response === false) {
+      throw new HttpException("Incorrect password", HttpStatus.UNAUTHORIZED);
+    }
+
+    return true;
   }
 }

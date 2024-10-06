@@ -50,7 +50,6 @@ export class FranchiseController implements IController {
     category?: string
   ): Promise<FenextResponse> {
     console.log(`FRANCHISE LOADING ${page} ${countPerPage}`);
-    console.log(category);
     const result = await this.service.getAll(page, countPerPage, category);
 
     if (result.messages.length > 0) {

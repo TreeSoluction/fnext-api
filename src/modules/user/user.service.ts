@@ -89,10 +89,8 @@ export class UserService {
         where: {
           id: id,
         },
-        select: {
-          id: true,
-          email: true,
-          name: true,
+        include: {
+          Owner: true,
         },
       });
       return new FenextResponse(new Array<FenextMessage>(), userSearchResult);

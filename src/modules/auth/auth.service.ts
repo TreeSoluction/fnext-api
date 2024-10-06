@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import { EOperations } from "src/enums/operationsResults/EOperations";
 import criptografy from "src/helper/criptografy";
-import { loginDTO } from "./dto/loginDTO";
+import { loginDTO } from "./loginDTO";
 
 @Injectable()
 export class AuthService {
