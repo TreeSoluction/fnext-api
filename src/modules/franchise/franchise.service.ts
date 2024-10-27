@@ -17,18 +17,12 @@ export class FranchiseService {
         data: {
           ...dto.Business,
           Owner: { connect: { id: dto.ownerID } },
-          Models: {
-            create: dto.Models,
-          },
         },
-        include: { Models: true },
       });
 
       return new FenextResponse(new Array<FenextMessage>(), result);
     } catch (exception) {
       let messages = new Array<FenextMessage>();
-
-      console.log(exception);
 
       if (exception.code === "P2016") {
         messages.push(
@@ -47,7 +41,6 @@ export class FranchiseService {
           where: {
             id: id,
           },
-          include: { Models: true },
         });
       return new FenextResponse(new Array<FenextMessage>(), userSearchResult);
     } catch (exception) {
@@ -63,16 +56,9 @@ export class FranchiseService {
     }
   }
 
-  async getAll(
-    page: number,
-    countPerPage: number,
-    category?: string
-  ): Promise<FenextResponse> {
+  async getAll(page: number, countPerPage: number): Promise<FenextResponse> {
     try {
       const userSearchResult = await this.prismaClient.business.findMany({
-        where: {
-          sector: category || undefined,
-        },
         skip: countPerPage * page || 0,
         take: countPerPage || undefined,
       });
@@ -84,28 +70,28 @@ export class FranchiseService {
     }
   }
 
-  async deactive(id: string): Promise<FenextResponse> {
-    try {
-      const result = await this.prismaClient.business.update({
-        data: {
-          deleted: true,
-        },
-        where: {
-          id: id,
-        },
-      });
+  // async deactive(id: string): Promise<FenextResponse> {
+  //   try {
+  //     const result = await this.prismaClient.business.update({
+  //       data: {
+  //         deleted: true,
+  //       },
+  //       where: {
+  //         id: id,
+  //       },
+  //     });
 
-      return new FenextResponse(new Array<FenextMessage>(), result);
-    } catch (exception) {
-      let messages = new Array<FenextMessage>();
+  //     return new FenextResponse(new Array<FenextMessage>(), result);
+  //   } catch (exception) {
+  //     let messages = new Array<FenextMessage>();
 
-      if (exception.code === "P2016") {
-        messages.push(
-          new FenextMessage(EOperations.NOT_FOUND, "This business not found")
-        );
-      }
+  //     if (exception.code === "P2016") {
+  //       messages.push(
+  //         new FenextMessage(EOperations.NOT_FOUND, "This business not found")
+  //       );
+  //     }
 
-      return new FenextResponse(messages, null);
-    }
-  }
+  //     return new FenextResponse(messages, null);
+  //   }
+  // }
 }

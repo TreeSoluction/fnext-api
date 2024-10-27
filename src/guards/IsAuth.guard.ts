@@ -9,12 +9,10 @@ export class IsAuth implements CanActivate {
     const req = context.switchToHttp().getRequest();
 
     if (!req.headers["authorization"]) {
-      console.log("INvalido");
       return false;
     }
 
     if (this.service.verifyToken(req.headers["authorization"])) {
-      console.log("Valido");
       return true;
     }
 

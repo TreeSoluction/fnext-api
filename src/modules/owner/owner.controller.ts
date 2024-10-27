@@ -10,12 +10,12 @@ import {
   NotFoundException,
   Delete,
   UseGuards,
+  NotImplementedException,
 } from "@nestjs/common";
 import IController from "src/domain/interfaces/IController";
 import { FenextResponse } from "src/domain/responses/fenextResponse";
 import { OwnerService } from "./owner.service";
 import { CreateOwnerDTO } from "./dto/CreateOwnerDTO";
-import { IsAuth } from "src/guards/IsAuth.guard";
 
 @Controller("owner")
 export class OwnerController implements IController {
@@ -28,13 +28,7 @@ export class OwnerController implements IController {
   @Post()
   @HttpCode(200)
   async register(@Body() dto: CreateOwnerDTO): Promise<FenextResponse> {
-    const result = await this.service.create(dto);
-
-    if (result.messages.length > 0) {
-      throw new BadRequestException(result);
-    }
-
-    return result;
+    throw new Error("Method not implemented.");
   }
 
   @Get()

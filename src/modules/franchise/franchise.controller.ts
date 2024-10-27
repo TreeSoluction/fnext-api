@@ -4,11 +4,9 @@ import {
   HttpCode,
   Post,
   BadRequestException,
-  Delete,
   NotFoundException,
   Param,
   Get,
-  UseGuards,
   Query,
   Inject,
   UseInterceptors,
@@ -45,24 +43,9 @@ export class FranchiseController implements IController {
     @Query("page")
     page?: number,
     @Query("countPerPage")
-    countPerPage?: number,
-    @Query("category")
-    category?: string
+    countPerPage?: number
   ): Promise<FenextResponse> {
-    console.log(`FRANCHISE LOADING ${page} ${countPerPage}`);
-    const result = await this.service.getAll(page, countPerPage, category);
-
-    if (result.messages.length > 0) {
-      throw new BadRequestException(result);
-    }
-
-    return result;
-  }
-
-  @Delete()
-  @HttpCode(200)
-  async delete(id: string): Promise<FenextResponse> {
-    const result = await this.service.deactive(id);
+    const result = await this.service.getAll(page, countPerPage);
 
     if (result.messages.length > 0) {
       throw new BadRequestException(result);
