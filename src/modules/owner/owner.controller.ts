@@ -21,14 +21,16 @@ import { CreateOwnerDTO } from "./dto/CreateOwnerDTO";
 export class OwnerController implements IController {
   constructor(private readonly service: OwnerService) {}
 
-  getById(id: string): Promise<FenextResponse> {
-    throw new Error("Method not implemented.");
-  }
-
-  @Post()
+  @Get(":id/haveFranchise")
   @HttpCode(200)
-  async register(@Body() dto: CreateOwnerDTO): Promise<FenextResponse> {
-    throw new Error("Method not implemented.");
+  async verifyHaveFranchise(@Param("id") id: string): Promise<FenextResponse> {
+    const result = await this.service.verifyHaveFranchise(id);
+
+    if (result.messages.length > 0) {
+      throw new BadRequestException(result);
+    }
+
+    return result;
   }
 
   @Get()

@@ -10,35 +10,31 @@ import { CreateOwnerDTO } from "./dto/CreateOwnerDTO";
 export class OwnerService {
   constructor(private readonly prismaClient: PrismaClient) {}
 
-  // async create(dto: CreateOwnerDTO): Promise<FenextResponse> {
-  //   try {
-  //     const result = await this.prismaClient.owner.create({
-  //       data: {
-  //         birth_date: new Date(dto.birth_date),
-  //         cpf: dto.cpf,
-  //         name: dto.name,
-  //         phone: dto.phone,
-  //         User: { connect: { id: dto.userID } },
-  //       },
-  //     });
+  async verifyHaveFranchise(id: string): Promise<FenextResponse> {
+    try {
+      const franchise = await this.prismaClient.business.count({
+        where: {
+          ownerId: id,
+        },
+      });
 
-  //     return new FenextResponse(new Array<FenextMessage>(), result);
-  //   } catch (exception) {
-  //     let messages = new Array<FenextMessage>();
-  //     if (exception.code === "P2014") {
-  //       messages.push(
-  //         new FenextMessage(
-  //           EOperations.CONFLICT,
-  //           "This user or cpf already taken"
-  //         )
-  //       );
-  //     } else {
-  //       messages.push(new FenextMessage(EOperations.FAIL, exception));
-  //     }
+      if (franchise > 0) {
+        return new FenextResponse(new Array<FenextMessage>(), true);
+      } else {
+        return new FenextResponse(new Array<FenextMessage>(), false);
+      }
+    } catch (exception) {
+      let messages = new Array<FenextMessage>();
 
-  //     return new FenextResponse(messages, null);
-  //   }
-  // }
+      if (exception.code === "P2016") {
+        messages.push(
+          new FenextMessage(EOperations.NOT_FOUND, "This user not found")
+        );
+      }
+
+      return new FenextResponse(messages, null);
+    }
+  }
 
   async get(id: string): Promise<FenextResponse> {
     try {
