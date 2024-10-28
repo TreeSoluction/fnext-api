@@ -16,6 +16,6 @@ async function bootstrap() {
 
   app.useBodyParser("json", { limit: "10mb" });
 
-  await app.listen(process.env.PORT);
+  await app.listen(process.env.PORT || 4000);
 }
 bootstrap();
