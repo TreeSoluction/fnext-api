@@ -56,6 +56,27 @@ export class FranchiseService {
     }
   }
 
+  async getByOwner(id: string): Promise<FenextResponse> {
+    try {
+      const businessResult = await this.prismaClient.business.findFirst({
+        where: {
+          ownerId: id,
+        },
+      });
+      return new FenextResponse(new Array<FenextMessage>(), businessResult);
+    } catch (exception) {
+      let messages = new Array<FenextMessage>();
+
+      if (exception.code === "P2016") {
+        messages.push(
+          new FenextMessage(EOperations.NOT_FOUND, "This business not found")
+        );
+      }
+
+      return new FenextResponse(messages, null);
+    }
+  }
+
   async getAll(page: number, countPerPage: number): Promise<FenextResponse> {
     try {
       const userSearchResult = await this.prismaClient.business.findMany({

@@ -36,6 +36,18 @@ export class FranchiseController implements IController {
     return result;
   }
 
+  @Get("owner/:id")
+  @HttpCode(200)
+  async getFranchiseByOwner(@Param("id") id: string) {
+    const result = await this.service.getByOwner(id);
+
+    if (result.messages.length > 0) {
+      throw new NotFoundException(result);
+    }
+
+    return result;
+  }
+
   @Get()
   @HttpCode(200)
   @UseInterceptors(CacheInterceptor)

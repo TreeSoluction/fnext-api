@@ -29,6 +29,18 @@ import { IsAuth } from "src/guards/IsAuth.guard";
 export class UserController implements IController, IUserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get("verifyBusiness/:id")
+  @HttpCode(200)
+  async verifyBusiness(@Param("id") id: string): Promise<FenextResponse> {
+    const result = await this.userService.verify(id);
+
+    if (result.messages.length > 0) {
+      throw new BadRequestException(result);
+    }
+
+    return result;
+  }
+
   @Post()
   @HttpCode(200)
   async register(@Body() dto: CreateUserDTO): Promise<FenextResponse> {
